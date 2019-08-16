@@ -17,10 +17,10 @@
   ],
   "require" : {
     "php" : ">=7.1",
-    "doctrine/dbal": "^2.9",
-    "minwork/minwork": "0.*"
+    "doctrine/dbal": "^2.9"
   },
   "require-dev" : {
+    "minwork/minwork": "0.*",
     "phpunit/phpunit" : "^7.0",
     "php-coveralls/php-coveralls": "^2.1"
   },
