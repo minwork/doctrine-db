@@ -17,7 +17,8 @@
   ],
   "require" : {
     "php" : ">=7.1",
-    "doctrine/dbal": "^2.9"
+    "doctrine/dbal": "^2.9",
+    "ext-pdo": "*"
   },
   "require-dev" : {
     "minwork/minwork": "0.*",
