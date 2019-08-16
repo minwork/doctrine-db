@@ -1,0 +1,32 @@
+{
+  "name" : "minwork/doctrine-db",
+  "description" : "Doctrine DBAL layer adapted to framework interfaces",
+  "type" : "library",
+  "keywords" : [
+    "doctrine",
+    "minwork",
+    "database",
+    "php 7"
+  ],
+  "license" : "MIT",
+  "authors" : [{
+    "name" : "Christopher Kalkhoff",
+    "email" : "krzysztof.kalkhoff@gmail.com",
+    "role" : "Founder"
+  }
+  ],
+  "require" : {
+    "php" : ">=7.1",
+    "doctrine/dbal": "^2.9",
+    "minwork/minwork": "0.*"
+  },
+  "require-dev" : {
+    "phpunit/phpunit" : "^7.0",
+    "php-coveralls/php-coveralls": "^2.1"
+  },
+  "autoload" : {
+    "psr-4" : {
+      "Minwork\\" : "src/"
+    }
+  }
+}

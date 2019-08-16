@@ -1,0 +1,7 @@
+.settings/
+.buildpath
+.project
+.idea/
+composer.lock
+vendor/
+tests_time_log.xml
