@@ -121,7 +121,10 @@ class Table implements TableInterface, DatabaseStorageInterface
     {
         // If columns wasn't specified in constructor load them from database schema
         if (empty($this->columns)) {
-            $this->setColumns($this->getDetails()->getColumns());
+            $this->setColumns(array_map(function ($column) {
+                /** @var \Doctrine\DBAL\Schema\Column $column */
+                return Column::createFromDoctrine($column);
+            }, $this->getDetails()->getColumns()));
         }
 
         $columns = $this->columns;

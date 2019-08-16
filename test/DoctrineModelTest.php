@@ -56,7 +56,7 @@ class DoctrineModelTest extends TestCase
         self::$columnTypes = [
             'int' => Type::INTEGER,
             'string' => Type::STRING,
-            'datetime' => Type::DATETIME,
+            'datetime' => Type::STRING,
             'bool' => Type::BOOLEAN,
             'text' => Type::TEXT,
         ];
@@ -147,6 +147,13 @@ EOT;
             'email'
         ]));
 
+        // Test getting data on model with set id
+        $testModel = new Model(new self::$table(self::$database, 'test'), $model->getId());
+        $this->assertSame($data, $testModel->getData());
+        $this->assertSame($model->getId(), $testModel->getId());
+        $this->assertTrue($testModel->exists());
+        unset($testModel);
+
         $model->execute(new Update(), $newData);
         $this->assertTrue($model->exists());
         $this->assertEquals(array_merge($data, $newData), $model->getData());
@@ -158,6 +165,7 @@ EOT;
 
         $model->setId($id);
         $this->assertTrue($model->exists());
+
 
         $model->execute(new Delete());
         $this->assertFalse($model->exists());

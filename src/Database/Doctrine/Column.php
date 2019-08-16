@@ -10,6 +10,7 @@ namespace Minwork\Database\Doctrine;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Column as DocColumn;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\Instantiator\Instantiator;
 use InvalidArgumentException;
 use Minwork\Database\Interfaces\ColumnInterface;
 use Minwork\Database\Interfaces\DatabaseInterface;
@@ -46,6 +47,23 @@ class Column implements ColumnInterface
         $this->column = new DocColumn($name, Type::getType($type));
 
         $this->setDefaultValue($defaultValue)->setNullable($nullable)->setPrimaryKey($primaryKey)->setAutoIncrement($autoIncrement);
+    }
+
+    /**
+     * @param DocColumn $column
+     * @return Column
+     * @throws \Doctrine\Instantiator\Exception\ExceptionInterface
+     */
+    public static function createFromDoctrine(DocColumn $column): self
+    {
+        $instantiator = new Instantiator();
+
+        /** @var self $instance */
+        $instance = $instantiator->instantiate(self::class);
+
+        $instance->column = $column;
+
+        return $instance;
     }
 
     public function getDoctrineColumn(): DocColumn
