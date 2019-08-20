@@ -112,6 +112,11 @@ class Database implements DatabaseInterface
         $this->connection->rollBack();
     }
 
+    public function inTransaction()
+    {
+        return $this->hasActiveTransaction();
+    }
+
     public function hasActiveTransaction(): bool
     {
         return $this->connection->isTransactionActive();
