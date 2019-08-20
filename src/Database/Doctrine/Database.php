@@ -93,6 +93,11 @@ class Database implements DatabaseInterface
 
     public function startTransaction()
     {
+        $this->beginTransaction();
+    }
+
+    public function beginTransaction()
+    {
         $this->connection->beginTransaction();
     }
 
@@ -101,6 +106,14 @@ class Database implements DatabaseInterface
      */
     public function finishTransaction(): void
     {
+        $this->commit();
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    public function commit()
+    {
         $this->connection->commit();
     }
 
@@ -108,6 +121,14 @@ class Database implements DatabaseInterface
      * @throws ConnectionException
      */
     public function abortTransaction(): void
+    {
+        $this->rollBack();
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    public function rollBack(): void
     {
         $this->connection->rollBack();
     }
