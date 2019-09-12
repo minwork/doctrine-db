@@ -149,6 +149,7 @@ EOT;
 
         // Test getting data on model with set id
         $testModel = new Model(new self::$table(self::$database, 'test'), $model->getId());
+        $this->assertSame('id', $testModel->getStorage()->getPrimaryKey());
         $this->assertSame($data, $testModel->getData());
         $this->assertSame($model->getId(), $testModel->getId());
         $this->assertTrue($testModel->exists());
@@ -212,6 +213,7 @@ EOT;
         $this->assertSame($data['data'], $model->getData('data'));
 
         $model = new Model($table, $ids);
+        $this->assertSame(array_keys($ids), $model->getStorage()->getPrimaryKey());
         $this->assertEquals($data['data'], $model->getData('data'));
 
         Timer::finish();

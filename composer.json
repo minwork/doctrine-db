@@ -1,34 +1,40 @@
 {
-  "name" : "minwork/doctrine-db",
-  "description" : "Doctrine DBAL layer adapted to framework interfaces",
-  "type" : "library",
-  "keywords" : [
+  "name": "minwork/doctrine-db",
+  "description": "Doctrine DBAL layer adapted to framework interfaces",
+  "type": "library",
+  "keywords": [
     "doctrine",
     "minwork",
     "database",
     "php 7"
   ],
-  "license" : "MIT",
-  "authors" : [{
-    "name" : "Christopher Kalkhoff",
-    "email" : "krzysztof.kalkhoff@gmail.com",
-    "role" : "Founder"
-  }
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Christopher Kalkhoff",
+      "email": "krzysztof.kalkhoff@gmail.com",
+      "role": "Founder"
+    }
   ],
-  "require" : {
-    "php" : ">=7.1",
+  "require": {
+    "php": ">=7.1",
     "doctrine/dbal": "^2.9",
     "ext-pdo": "*",
     "doctrine/instantiator": "^1.2"
   },
-  "require-dev" : {
+  "require-dev": {
     "minwork/minwork": "0.*",
-    "phpunit/phpunit" : "^7.0",
+    "phpunit/phpunit": "^7.0",
     "php-coveralls/php-coveralls": "^2.1"
   },
-  "autoload" : {
-    "psr-4" : {
-      "Minwork\\" : "src/"
+  "autoload": {
+    "psr-4": {
+      "Minwork\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\Utils\\": "vendor/minwork/minwork/test/Utils/"
     }
   }
 }

@@ -16,6 +16,7 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Table as DoctrineTable;
 use InvalidArgumentException;
 use Minwork\Basic\Traits\Debugger;
+use Minwork\Database\Interfaces\ColumnInterface;
 use Minwork\Database\Interfaces\DatabaseInterface;
 use Minwork\Database\Interfaces\TableInterface;
 use Minwork\Database\Utility\Condition;
@@ -67,12 +68,12 @@ class Table implements TableInterface, DatabaseStorageInterface
      * @param string $name
      * @param Column[] $columns
      */
-    public function __construct(Database $database, string $name, array $columns = [])
+    public function __construct(Database $database, string $name, ?array $columns = null)
     {
         $this
             ->setDatabase($database)
-            ->setDetails($this->getSchemaManager()->listTableDetails($database->getConnection()->quoteIdentifier(Formatter::removeQuotes($name))))
-            ->setColumns($columns);
+            ->setDetails($this->getSchemaManager()->listTableDetails(Formatter::removeQuotes($name)))
+            ->setColumns($columns ?? $this->getDbColumns());
     }
 
     protected function getSchemaManager(): AbstractSchemaManager
@@ -111,6 +112,27 @@ class Table implements TableInterface, DatabaseStorageInterface
     }
 
     /**
+     * @return ColumnInterface[]
+     */
+    protected function getDbColumns(): array
+    {
+        try {
+            $primaryKeyColumns = $this->getDetails()->getPrimaryKeyColumns();
+        } catch (DBALException $e) {
+            $primaryKeyColumns = [];
+        }
+
+        return array_map(function ($column) use ($primaryKeyColumns) {
+            /** @var \Doctrine\DBAL\Schema\Column $column */
+            $col = Column::createFromDoctrine($column);
+            if (in_array($col->getName(), $primaryKeyColumns)) {
+                $col->setPrimaryKey(true);
+            }
+            return $col;
+        }, $this->getDetails()->getColumns());
+    }
+
+    /**
      *
      * {@inheritdoc}
      *
@@ -119,20 +141,12 @@ class Table implements TableInterface, DatabaseStorageInterface
      */
     public function getColumns($filter = null): array
     {
-        // If columns wasn't specified in constructor load them from database schema
-        if (empty($this->columns)) {
-            $this->setColumns(array_map(function ($column) {
-                /** @var \Doctrine\DBAL\Schema\Column $column */
-                return Column::createFromDoctrine($column);
-            }, $this->getDetails()->getColumns()));
-        }
-
         $columns = $this->columns;
 
         if ($filter & static::COLUMNS_NO_PK) {
-            $columns = Arr::filterByKeys($columns, $this->getPrimaryKeyColumns(), true);
+            $columns = Arr::filterByKeys($columns, $this->primaryKeys, true);
         } elseif ($filter & static::COLUMNS_PK_ONLY) {
-            $columns = Arr::filterByKeys($columns, $this->getPrimaryKeyColumns());
+            $columns = Arr::filterByKeys($columns, $this->primaryKeys);
         }
 
         if ($filter & self::COLUMN_NAMES) {
@@ -254,7 +268,7 @@ class Table implements TableInterface, DatabaseStorageInterface
             $newTable->dropColumn($name);
         }
 
-        $primaryKeyColumns = $this->getPrimaryKeyColumns();
+        $primaryKeyColumns = $this->primaryKeys;
         try {
             $currentPrimaryKeyColumns = $this->getDetails()->getPrimaryKeyColumns();
         } catch (Throwable $exception) {
@@ -294,7 +308,7 @@ class Table implements TableInterface, DatabaseStorageInterface
             return false;
         }
 
-        $table->setPrimaryKey($this->getPrimaryKeyColumns());
+        $table->setPrimaryKey($this->primaryKeys);
 
         if ($replace) {
             $manager->dropAndCreateTable($table);
@@ -470,15 +484,6 @@ class Table implements TableInterface, DatabaseStorageInterface
     }
 
     /**
-     * Get array of primary keys column names
-     * @return string[]
-     */
-    protected function getPrimaryKeyColumns(): array
-    {
-        return $this->primaryKeys;
-    }
-
-    /**
      *
      * {@inheritdoc}
      *
@@ -486,8 +491,7 @@ class Table implements TableInterface, DatabaseStorageInterface
      */
     public function getPrimaryKey()
     {
-        $pkFields = $this->getPrimaryKeyColumns();
-        return count($pkFields) === 1 ? reset($pkFields) : $pkFields;
+        return count($this->primaryKeys) === 1 ? reset($this->primaryKeys) : $this->primaryKeys;
     }
 
     public function setPrimaryKeys($columns): TableInterface
