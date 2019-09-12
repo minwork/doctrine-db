@@ -21,7 +21,7 @@ use Throwable;
 class DoctrineDatabaseTest extends TestCase
 {
 
-    const TABLE_NAME = '#!@$%^&*()_+;/,`~<>:"\'}{|\\';
+    const TABLE_NAME = 'char';
 
     /**
      * @var DoctrineDatabase
