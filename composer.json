@@ -20,10 +20,10 @@
     "php": ">=7.1",
     "doctrine/dbal": "^2.9",
     "ext-pdo": "*",
-    "doctrine/instantiator": "^1.2"
+    "doctrine/instantiator": "^1.2",
+    "minwork/minwork": "^0.15"
   },
   "require-dev": {
-    "minwork/minwork": "0.*",
     "phpunit/phpunit": "^7.0",
     "php-coveralls/php-coveralls": "^2.1"
   },
