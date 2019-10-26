@@ -636,7 +636,9 @@ class Table implements TableInterface, DatabaseStorageInterface
     protected function appendGroup(QueryBuilder $builder, $group): self
     {
         if (is_array($group)) {
-            $builder->groupBy($group);
+            $builder->groupBy(array_map(function ($part) {
+                return $this->escapeColumn($part);
+            }, $group));
         } elseif (!is_null($group)) {
             $builder->groupBy(strval($group));
         }
@@ -649,6 +651,7 @@ class Table implements TableInterface, DatabaseStorageInterface
         if (is_array($order)) {
             foreach ($order as $key => $value) {
                 if (is_string($key)) {
+                    $key = $this->escapeColumn($key);
                     if (is_string($value)) {
                         $builder->addOrderBy($key, $value);
                     } elseif (is_int($value) || is_bool($value)) {
