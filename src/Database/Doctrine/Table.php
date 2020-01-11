@@ -744,7 +744,13 @@ class Table implements TableInterface, DatabaseStorageInterface
                 array_walk($columns, function ($v, $k) {
                     return "{$this->escapeColumn($k)} as {$this->escapeColumn($v)}";
                 });
+            } else {
+                $columns = array_map(function ($column) {
+                    return $this->escapeColumn($column);
+                }, $columns);
             }
+
+            return implode(', ', $columns);
         }/* elseif ($columns === self::COLUMNS_ALL) {
             return null;
         }*/
